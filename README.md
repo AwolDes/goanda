@@ -34,7 +34,7 @@ func main() {
 
 ## TODO
 ### **API** (in order of priority)
-- [ ] Instrument endpoints (to get prices and the order book)
+- [x] Instrument endpoints (to get prices and the order book)
 - [ ] Order endpoints (to create, get or update orders for an account)
 - [ ] Trade enpoints (to get information on current trades) 
 - [ ] Position endpoints (to get information on current positions)

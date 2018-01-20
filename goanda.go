@@ -19,13 +19,14 @@ type OandaConnection struct {
 	port            int
 	ssl             bool
 	token           string
+	accountId		string
 	datetime_format string
 	headers         *Headers
 }
 
 const OANDA_AGENT string = "v20-golang/0.0.1"
 
-func NewConnection(token string, live bool) *OandaConnection {
+func NewConnection(accountId string, token string, live bool) *OandaConnection {
 	hostname := ""
 	// should we use the live API?
 	if live {
@@ -64,15 +65,33 @@ func (c *OandaConnection) Request(endpoint string) []byte {
 		Timeout: time.Second * 5, // 5 sec timeout
 	}
 
-	var buffer bytes.Buffer
-	// Generate the auth header
-	buffer.WriteString(c.hostname)
-	buffer.WriteString(endpoint)
-
-	url := buffer.String()
+	url := createUrl(c.hostname, endpoint)
 
 	// New request object
 	req, err := http.NewRequest(http.MethodGet, url, nil)
+	checkErr(err)
+
+	req.Header.Set("User-Agent", c.headers.agent)
+	req.Header.Set("Authorization", c.headers.auth)
+
+	res, getErr := client.Do(req)
+	checkErr(getErr)
+
+	body, readErr := ioutil.ReadAll(res.Body)
+	checkErr(readErr)
+
+	return body
+}
+
+func (c *OandaConnection) Send(endpoint string, body []byte) []byte {
+	client := http.Client{
+		Timeout: time.Second * 5, // 5 sec timeout
+	}
+
+	url := createUrl(c.hostname, endpoint)
+
+	// New request object
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
 	checkErr(err)
 
 	req.Header.Set("User-Agent", c.headers.agent)
