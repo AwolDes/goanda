@@ -1,11 +1,8 @@
-package go_oanda
+package goanda
 
 import (
 	"bytes"
-	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 )
@@ -32,9 +29,9 @@ func NewConnection(token string, live bool) *OandaConnection {
 	hostname := ""
 	// should we use the live API?
 	if live {
-		hostname = "https://api-fxtrade.oanda.com/"
+		hostname = "https://api-fxtrade.oanda.com/v3"
 	} else {
-		hostname = "https://api-fxpractice.oanda.com/"
+		hostname = "https://api-fxpractice.oanda.com/v3"
 	}
 
 	var buffer bytes.Buffer
@@ -62,27 +59,7 @@ func NewConnection(token string, live bool) *OandaConnection {
 	return connection
 }
 
-type Candle struct {
-	Open  string `json:"o"`
-	Close string `json:"c"`
-	Low   string `json:"l"`
-	High  string `json:"h"`
-}
-
-type Candles struct {
-	Complete bool    `json:"complete"`
-	Volume   float64 `json:"volume"`
-	Time     string  `json:"time"`
-	Mid      Candle  `json:"mid"`
-}
-
-type InstrumentHistory struct {
-	Instrument  string    `json:"instrument"`
-	Granularity string    `json:"granularity"`
-	Candles     []Candles `json:"candles"`
-}
-
-func (c *OandaConnection) Request(endpoint string) InstrumentHistory {
+func (c *OandaConnection) Request(endpoint string) []byte {
 	client := http.Client{
 		Timeout: time.Second * 5, // 5 sec timeout
 	}
@@ -96,31 +73,16 @@ func (c *OandaConnection) Request(endpoint string) InstrumentHistory {
 
 	// New request object
 	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println(url)
+	checkErr(err)
 
 	req.Header.Set("User-Agent", c.headers.agent)
 	req.Header.Set("Authorization", c.headers.auth)
 
 	res, getErr := client.Do(req)
-	if getErr != nil {
-		log.Fatal(getErr)
-	}
+	checkErr(getErr)
 
 	body, readErr := ioutil.ReadAll(res.Body)
-	if readErr != nil {
-		log.Fatal(readErr)
-	}
+	checkErr(readErr)
 
-	data := InstrumentHistory{}
-	jsonErr := json.Unmarshal(body, &data)
-	if jsonErr != nil {
-		log.Fatal(jsonErr)
-	}
-
-	fmt.Println(data)
-	return data
+	return body
 }
