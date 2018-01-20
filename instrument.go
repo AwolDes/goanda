@@ -1,9 +1,5 @@
 package goanda
 
-import (
-	"encoding/json"
-)
-
 type Candle struct {
 	Open  string `json:"o"`
 	Close string `json:"c"`
@@ -24,12 +20,44 @@ type InstrumentHistory struct {
 	Candles     []Candles `json:"candles"`
 }
 
+type Bucket struct {
+	Price string `json:"price"`
+	LongCountPercent string `json:"longCountPercent"`
+	ShortCountPercent string `json:"shortCountPercent"`
+}
+
+type BrokerBook struct {
+	Instrument  string `json:"instrument"`
+	Time string `json:"time"`
+	Price string `json:"price"`
+	BucketWidth string `json:"bucketWidth"`
+	Buckets []Bucket `json:"buckets"`
+}
+
 func (c *OandaConnection) GetCandles(instrument string) InstrumentHistory {
 	endpoint := "/instruments/" + instrument + "/candles"
 	candles := c.Request(endpoint)
 	data := InstrumentHistory{}
-	jsonErr := json.Unmarshal(candles, &data)
-	checkErr(jsonErr)
+	unmarshalJson(candles, &data)
 
 	return data
 }
+
+func (c *OandaConnection) OrderBook(instrument string) BrokerBook {
+	endpoint := "/instruments/" + instrument + "/orderBook"
+	orderbook := c.Request(endpoint)
+	data := BrokerBook{}
+	unmarshalJson(orderbook, &data)
+
+	return data
+}
+
+func (c *OandaConnection) PositionBook(instrument string) BrokerBook {
+	endpoint := "/instruments/" + instrument + "/positionBook"
+	orderbook := c.Request(endpoint)
+	data := BrokerBook{}
+	unmarshalJson(orderbook, &data)
+
+	return data
+}
+
