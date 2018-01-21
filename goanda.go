@@ -83,7 +83,7 @@ func (c *OandaConnection) Request(endpoint string) []byte {
 	return body
 }
 
-func (c *OandaConnection) Send(endpoint string, body []byte) []byte {
+func (c *OandaConnection) Send(endpoint string, data []byte) []byte {
 	client := http.Client{
 		Timeout: time.Second * 5, // 5 sec timeout
 	}
@@ -91,7 +91,7 @@ func (c *OandaConnection) Send(endpoint string, body []byte) []byte {
 	url := createUrl(c.hostname, endpoint)
 
 	// New request object
-	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(data))
 	checkErr(err)
 
 	req.Header.Set("User-Agent", c.headers.agent)
