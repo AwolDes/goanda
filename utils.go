@@ -1,9 +1,9 @@
 package goanda
 
 import (
-	"log"
-	"encoding/json"
 	"bytes"
+	"encoding/json"
+	"log"
 )
 
 func checkErr(err error) {
@@ -13,6 +13,8 @@ func checkErr(err error) {
 }
 
 func unmarshalJson(body []byte, data interface{}) {
+	// TODO: Better way to handle error responses from oanda
+	// I.e: {"errorMessage":"Invalid value specified for 'accountID'"}
 	jsonErr := json.Unmarshal(body, &data)
 	checkErr(jsonErr)
 }

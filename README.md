@@ -1,5 +1,5 @@
 # goanda
-A Golang wrapper for the [OANDA v20 API](http://developer.oanda.com/rest-live-v20/introduction/). Currently OANDA has wrappers for Python, Javascript and Java. Goanda exists to extend upon those languages because of the increasing popularity of Go and for a side prject I'm working on. 
+A Golang wrapper for the [OANDA v20 API](http://developer.oanda.com/rest-live-v20/introduction/). Currently OANDA has wrappers for Python, Javascript and Java. Goanda exists to extend upon those languages because of the increasing popularity of Go and for a side prject I'm working on.
 
 ## Requirements
 - Go v1.9+
@@ -7,7 +7,9 @@ A Golang wrapper for the [OANDA v20 API](http://developer.oanda.com/rest-live-v2
 _Note: This package was created by a third party, and was not created by anyone affiliated with OANDA_
 
 ## Usage
-To use this package run `go get github.com/awoldes/goanda` then import it into your program and set it up with the following snippet:
+To use this package run `go get github.com/awoldes/goanda` then import it into your program and set it up following the snippets below.
+
+### Price History
 ```
 package main
 
@@ -25,11 +27,87 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 	key := os.Getenv("OANDA_API_KEY")
-	oanda := goanda.NewConnection(key, false)
-	history := oanda.Request("v3/instruments/EUR_USD/candles")
+	accountID := os.Getenv("OANDA_ACCOUNT_ID")
+	oanda := goanda.NewConnection(accountID, key, false)
+	history := oanda.GetCandles("EUR_USD")
 	fmt.Println(history)
 }
 
+```
+### Placing a Market Order
+
+```
+package main
+
+import (
+	"fmt"
+	"log"
+	"os"
+	"github.com/joho/godotenv"
+	"github.com/awoldes/goanda"
+)
+
+func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	key := os.Getenv("OANDA_API_KEY")
+	accountID := os.Getenv("OANDA_ACCOUNT_ID")
+	oanda := goanda.NewConnection(accountID, key, false)
+	order := &goanda.Order{
+		Order: goanda.OrderBody{
+			Units:        "10000",
+			Instrument:   "EUR_USD",
+			TimeInForce:  "GTC",
+			Type:         "MARKET",
+			PositionFill: "DEFAULT",
+			Price:        "1.25000",
+		},
+	}
+	orderResult := oanda.CreateOrder(order)
+	fmt.Printf("%+v\n", orderResult)
+}
+```
+
+### Placing a Limit order
+
+```
+package main
+
+import (
+	"fmt"
+	"log"
+	"os"
+	"github.com/joho/godotenv"
+	"github.com/awoldes/goanda"
+)
+
+func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	key := os.Getenv("OANDA_API_KEY")
+	accountID := os.Getenv("OANDA_ACCOUNT_ID")
+	oanda := goanda.NewConnection(accountID, key, false)
+	order := &goanda.Order{
+		Order: goanda.OrderBody{
+			Units:        "100",
+			Instrument:   "EUR_USD",
+			TimeInForce:  "FOK",
+			Type:         "LIMIT",
+			PositionFill: "DEFAULT",
+			Price:        "1.25000",
+			StopLossOnFill: &goanda.OnFill{
+				TimeInForce: "GTC",
+			 	Price:       "1.24000",
+			},
+		},
+	}
+	orderResult := oanda.CreateOrder(order)
+	fmt.Printf("%+v\n", orderResult)
+}
 ```
 
 ## TODO
