@@ -2,6 +2,7 @@ package goanda
 
 import (
 	"encoding/json"
+	"time"
 )
 
 type OrderExtensions struct {
@@ -32,17 +33,17 @@ type Order struct {
 }
 
 type TransactionInfo struct {
-	AccountID    string `json:"accountID"`
-	BatchID      string `json:"batchID"`
-	ID           string `json:"id"`
-	Instrument   string `json:"instrument"`
-	PositionFill string `json:"positionFill"`
-	Reason       string `json:"reason"`
-	Time         string `json:"time"`
-	TimeInForce  string `json:"timeInForce"`
-	OrderType    string `json:"OrderType"`
-	Units        string `json:"units"`
-	UserID       int    `json:"userID"`
+	AccountID    string    `json:"accountID"`
+	BatchID      string    `json:"batchID"`
+	ID           string    `json:"id"`
+	Instrument   string    `json:"instrument"`
+	PositionFill string    `json:"positionFill"`
+	Reason       string    `json:"reason"`
+	Time         time.Time `json:"time"`
+	TimeInForce  string    `json:"timeInForce"`
+	OrderType    string    `json:"OrderType"`
+	Units        string    `json:"units"`
+	UserID       int       `json:"userID"`
 }
 type TradeOpen struct {
 	TradeID string `json:"tradeId"`
@@ -60,7 +61,7 @@ type TransactionAccountInfo struct {
 	Pl             string    `json:"pl"`
 	Price          string    `json:"price"`
 	Reason         string    `json:"reason"`
-	Time           string    `json:"time"`
+	Time           time.Time `json:"time"`
 	TradeOpened    TradeOpen `json:""`
 	OrderType      string    `json:"OrderType"`
 	Units          string    `json:"units"`
@@ -74,6 +75,31 @@ type OrderResponse struct {
 	RelatedTransactionIDs  []string               `json:"relatedTransactionIDs"`
 }
 
+type RetrievedOrder struct {
+	ClientExtensions struct {
+		Comment string `json:"comment"`
+		ID      string `json:"id"`
+		Tag     string `json:"tag"`
+	} `json:"clientExtensions"`
+	CreateTime       time.Time `json:"createTime"`
+	ID               string    `json:"id"`
+	Instrument       string    `json:"instrument"`
+	PartialFill      string    `json:"partialFill"`
+	PositionFill     string    `json:"positionFill"`
+	Price            string    `json:"price"`
+	ReplacesOrderID  string    `json:"replacesOrderID"`
+	State            string    `json:"state"`
+	TimeInForce      string    `json:"timeInForce"`
+	TriggerCondition string    `json:"triggerCondition"`
+	Type             string    `json:"type"`
+	Units            string    `json:"units"`
+}
+
+type RetreievedOrders struct {
+	LastTransactionID string           `json:"lastTransactionID"`
+	Orders            []RetrievedOrder `json:"orders"`
+}
+
 func (c *OandaConnection) CreateOrder(body *Order) OrderResponse {
 	endpoint := "/accounts/" + c.accountID + "/orders"
 	jsonBody, err := json.Marshal(body)
@@ -82,4 +108,18 @@ func (c *OandaConnection) CreateOrder(body *Order) OrderResponse {
 	data := OrderResponse{}
 	unmarshalJson(response, &data)
 	return data
+}
+
+func (c *OandaConnection) GetOrders(instrument string) RetreievedOrders {
+	endpoint := "/accounts/" + c.accountID + "/orders"
+
+	if instrument != "" {
+		endpoint = endpoint + "?instrument=" + instrument
+	}
+
+	response := c.Request(endpoint)
+	data := RetreievedOrders{}
+	unmarshalJson(response, &data)
+	return data
+
 }

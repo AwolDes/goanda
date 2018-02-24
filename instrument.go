@@ -1,5 +1,7 @@
 package goanda
 
+import "time"
+
 type Candle struct {
 	Open  string `json:"o"`
 	Close string `json:"c"`
@@ -8,10 +10,10 @@ type Candle struct {
 }
 
 type Candles struct {
-	Complete bool    `json:"complete"`
-	Volume   float64 `json:"volume"`
-	Time     string  `json:"time"`
-	Mid      Candle  `json:"mid"`
+	Complete bool      `json:"complete"`
+	Volume   int       `json:"volume"`
+	Time     time.Time `json:"time"`
+	Mid      Candle    `json:"mid"`
 }
 
 type InstrumentHistory struct {
@@ -21,17 +23,17 @@ type InstrumentHistory struct {
 }
 
 type Bucket struct {
-	Price string `json:"price"`
-	LongCountPercent string `json:"longCountPercent"`
+	Price             string `json:"price"`
+	LongCountPercent  string `json:"longCountPercent"`
 	ShortCountPercent string `json:"shortCountPercent"`
 }
 
 type BrokerBook struct {
-	Instrument  string `json:"instrument"`
-	Time string `json:"time"`
-	Price string `json:"price"`
-	BucketWidth string `json:"bucketWidth"`
-	Buckets []Bucket `json:"buckets"`
+	Instrument  string    `json:"instrument"`
+	Time        time.Time `json:"time"`
+	Price       string    `json:"price"`
+	BucketWidth string    `json:"bucketWidth"`
+	Buckets     []Bucket  `json:"buckets"`
 }
 
 func (c *OandaConnection) GetCandles(instrument string) InstrumentHistory {
@@ -60,4 +62,3 @@ func (c *OandaConnection) PositionBook(instrument string) BrokerBook {
 
 	return data
 }
-
