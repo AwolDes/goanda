@@ -40,7 +40,7 @@ Look at the `/examples` directory for more!
 ## TODO
 ### **API** (in order of priority)
 - [x] Instrument endpoints (to get prices and the order book)
-- [ ] Order endpoints (to create, get or update orders for an account)
+- [x] Order endpoints (to create, get or update orders for an account)
 - [ ] Trade enpoints (to get information on current trades) 
 - [ ] Position endpoints (to get information on current positions)
 - [ ] Account endpoints (to get information on the account)

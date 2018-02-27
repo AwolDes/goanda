@@ -9,7 +9,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func placeLimitOrder() {
+func updateOrder() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -19,7 +19,7 @@ func placeLimitOrder() {
 	oanda := goanda.NewConnection(accountID, key, false)
 	order := goanda.OrderPayload{
 		Order: goanda.OrderBody{
-			Units:        "100",
+			Units:        "1000",
 			Instrument:   "EUR_USD",
 			TimeInForce:  "FOK",
 			Type:         "LIMIT",
@@ -27,10 +27,11 @@ func placeLimitOrder() {
 			Price:        "1.25000",
 			StopLossOnFill: &goanda.OnFill{
 				TimeInForce: "GTC",
-				Price:       "1.24000",
+				Price:       "1.2000",
 			},
 		},
 	}
-	orderResult := oanda.CreateOrder(order)
-	fmt.Printf("%+v\n", orderResult)
+
+	orderResponse := oanda.UpdateOrder("order-id", order)
+	fmt.Printf("%+v\n", orderResponse)
 }

@@ -2,7 +2,6 @@ package goanda
 
 import (
 	"bytes"
-	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -73,14 +72,7 @@ func (c *OandaConnection) Request(endpoint string) []byte {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	checkErr(err)
 
-	req.Header.Set("User-Agent", c.headers.agent)
-	req.Header.Set("Authorization", c.headers.auth)
-
-	res, getErr := client.Do(req)
-	checkErr(getErr)
-
-	body, readErr := ioutil.ReadAll(res.Body)
-	checkErr(readErr)
+	body := makeRequest(c, endpoint, client, req)
 
 	return body
 }
@@ -96,14 +88,20 @@ func (c *OandaConnection) Send(endpoint string, data []byte) []byte {
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(data))
 	checkErr(err)
 
-	req.Header.Set("User-Agent", c.headers.agent)
-	req.Header.Set("Authorization", c.headers.auth)
-	req.Header.Set("Content-Type", c.headers.contentType)
+	body := makeRequest(c, endpoint, client, req)
 
-	res, getErr := client.Do(req)
-	checkErr(getErr)
-	body, readErr := ioutil.ReadAll(res.Body)
-	checkErr(readErr)
+	return body
+}
 
+func (c *OandaConnection) Update(endpoint string, data []byte) []byte {
+	client := http.Client{
+		Timeout: time.Second * 5,
+	}
+
+	url := createUrl(c.hostname, endpoint)
+
+	req, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(data))
+	checkErr(err)
+	body := makeRequest(c, endpoint, client, req)
 	return body
 }

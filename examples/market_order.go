@@ -17,7 +17,7 @@ func placeMarketOrder() {
 	key := os.Getenv("OANDA_API_KEY")
 	accountID := os.Getenv("OANDA_ACCOUNT_ID")
 	oanda := goanda.NewConnection(accountID, key, false)
-	order := &goanda.Order{
+	order := goanda.OrderPayload{
 		Order: goanda.OrderBody{
 			Units:        "10000",
 			Instrument:   "EUR_USD",
