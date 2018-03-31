@@ -44,7 +44,7 @@ Look at the `/examples` directory for more!
 - [x] Trade enpoints (to get information on current trades) 
 - [x] Position endpoints (to get information on current positions)
 - [x] Account endpoints (to get information on the account)
-- [ ] Transaction endpoints (to get information on account transactions)
+- [x] Transaction endpoints (to get information on account transactions)
 - [ ] Pricing endpoints (to get pricing of instruments or stream)
 
 ### **Docs**
