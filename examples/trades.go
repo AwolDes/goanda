@@ -26,4 +26,10 @@ func getTrades() {
 
 	trade := oanda.GetTradesForInstrument("AUD_USD")
 	spew.Dump("%+v\n", trade)
+
+	reduceTrade := oanda.ReduceTradeSize("AUD_USD", goanda.CloseTradePayload{
+		Units: "100.00",
+	})
+
+	spew.Dump("%+v\n", reduceTrade)
 }

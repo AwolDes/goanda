@@ -42,7 +42,7 @@ Look at the `/examples` directory for more!
 - [x] Instrument endpoints (to get prices and the order book)
 - [x] Order endpoints (to create, get or update orders for an account)
 - [x] Trade enpoints (to get information on current trades) 
-- [ ] Position endpoints (to get information on current positions)
+- [x] Position endpoints (to get information on current positions)
 - [x] Account endpoints (to get information on the account)
 - [ ] Transaction endpoints (to get information on account transactions)
 - [ ] Pricing endpoints (to get pricing of instruments or stream)
