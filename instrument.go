@@ -1,5 +1,7 @@
 package goanda
 
+// Supporting OANDA docs - http://developer.oanda.com/rest-live-v20/instrument-ep/
+
 import "time"
 
 type Candle struct {

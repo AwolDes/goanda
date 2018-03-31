@@ -41,7 +41,7 @@ Look at the `/examples` directory for more!
 ### **API** (in order of priority)
 - [x] Instrument endpoints (to get prices and the order book)
 - [x] Order endpoints (to create, get or update orders for an account)
-- [ ] Trade enpoints (to get information on current trades) 
+- [x] Trade enpoints (to get information on current trades) 
 - [ ] Position endpoints (to get information on current positions)
 - [ ] Account endpoints (to get information on the account)
 - [ ] Pricing endpoints (to get pricing of instruments or stream)
