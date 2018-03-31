@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/awoldes/goanda"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/joho/godotenv"
 )
 
@@ -33,5 +33,5 @@ func updateOrder() {
 	}
 
 	orderResponse := oanda.UpdateOrder("order-id", order)
-	fmt.Printf("%+v\n", orderResponse)
+	spew.Dump("%+v\n", orderResponse)
 }

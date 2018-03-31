@@ -43,10 +43,17 @@ Look at the `/examples` directory for more!
 - [x] Order endpoints (to create, get or update orders for an account)
 - [x] Trade enpoints (to get information on current trades) 
 - [ ] Position endpoints (to get information on current positions)
-- [ ] Account endpoints (to get information on the account)
-- [ ] Pricing endpoints (to get pricing of instruments or stream)
+- [x] Account endpoints (to get information on the account)
 - [ ] Transaction endpoints (to get information on account transactions)
+- [ ] Pricing endpoints (to get pricing of instruments or stream)
 
 ### **Docs**
 - [ ] Write docs on how to use `goanda`
 - [ ] Write example programs for `goanda`
+
+
+## Supporting Projects
+Thank you to the following projects, they really helped me while I was developing this API
+
+- [JSON to Go from @mholt](https://mholt.github.io/json-to-go/) - this tool helped massively with all the structs that needed to be created.
+- [Spew from @davecgh](https://github.com/davecgh/go-spew) - this tool was awesome to debug with.

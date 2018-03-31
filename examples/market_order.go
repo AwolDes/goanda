@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/awoldes/goanda"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/joho/godotenv"
 )
 
@@ -28,5 +28,5 @@ func placeMarketOrder() {
 		},
 	}
 	orderResult := oanda.CreateOrder(order)
-	fmt.Printf("%+v\n", orderResult)
+	spew.Dump("%+v\n", orderResult)
 }

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/awoldes/goanda"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/joho/godotenv"
 )
 
@@ -18,5 +18,5 @@ func main() {
 	accountID := os.Getenv("OANDA_ACCOUNT_ID")
 	oanda := goanda.NewConnection(accountID, key, false)
 	history := oanda.GetCandles("EUR_USD")
-	fmt.Println(history)
+	spew.Dump(history)
 }

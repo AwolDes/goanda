@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/awoldes/goanda"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/joho/godotenv"
 )
 
@@ -19,6 +19,6 @@ func getOrders() {
 	oanda := goanda.NewConnection(accountID, key, false)
 	orders := oanda.GetOrders("EUR_USD")
 	pendingOrders := oanda.GetPendingOrders()
-	fmt.Printf("%+v\n", orders)
-	fmt.Printf("%+v\n", pendingOrders)
+	spew.Dump("%+v\n", orders)
+	spew.Dump("%+v\n", pendingOrders)
 }

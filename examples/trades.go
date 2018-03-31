@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/awoldes/goanda"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/joho/godotenv"
 )
 
@@ -19,11 +19,11 @@ func getTrades() {
 	oanda := goanda.NewConnection(accountID, key, false)
 
 	tradesResponse := oanda.GetTrade("54")
-	fmt.Printf("%+v\n", tradesResponse)
+	spew.Dump("%+v\n", tradesResponse)
 
 	openTrades := oanda.GetOpenTrades()
-	fmt.Printf("%+v\n", openTrades)
+	spew.Dump("%+v\n", openTrades)
 
 	trade := oanda.GetTradesForInstrument("AUD_USD")
-	fmt.Printf("%+v\n", trade)
+	spew.Dump("%+v\n", trade)
 }
