@@ -45,11 +45,13 @@ Look at the `/examples` directory for more!
 - [x] Position endpoints (to get information on current positions)
 - [x] Account endpoints (to get information on the account)
 - [x] Transaction endpoints (to get information on account transactions)
-- [ ] Pricing endpoints (to get pricing of instruments or stream)
+- [x] Pricing endpoints (to get pricing of instruments)
+- [ ] Streaming endpoints for Pricing & Transactions
 
 ### **Docs**
 - [ ] Write docs on how to use `goanda`
-- [ ] Write example programs for `goanda`
+- [x] Write example programs for `goanda`
+- [ ] Write tests for `goanda`
 
 
 ## Supporting Projects
