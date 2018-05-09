@@ -5,10 +5,10 @@ package goanda
 import "time"
 
 type Candle struct {
-	Open  string `json:"o"`
-	Close string `json:"c"`
-	Low   string `json:"l"`
-	High  string `json:"h"`
+	Open  float64 `json:"o,string"`
+	Close float64 `json:"c,string"`
+	Low   float64 `json:"l,string"`
+	High  float64 `json:"h,string"`
 }
 
 type Candles struct {
@@ -38,8 +38,8 @@ type BrokerBook struct {
 	Buckets     []Bucket  `json:"buckets"`
 }
 
-func (c *OandaConnection) GetCandles(instrument string) InstrumentHistory {
-	endpoint := "/instruments/" + instrument + "/candles"
+func (c *OandaConnection) GetCandles(instrument string, count string, granularity string) InstrumentHistory {
+	endpoint := "/instruments/" + instrument + "/candles?count=" + count + "&granularity=" + granularity
 	candles := c.Request(endpoint)
 	data := InstrumentHistory{}
 	unmarshalJson(candles, &data)
