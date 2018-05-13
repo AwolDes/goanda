@@ -2,7 +2,9 @@ package goanda
 
 // Supporting OANDA docs - http://developer.oanda.com/rest-live-v20/instrument-ep/
 
-import "time"
+import (
+	"time"
+)
 
 type Candle struct {
 	Open  float64 `json:"o,string"`

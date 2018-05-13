@@ -1,6 +1,8 @@
 package goanda
 
-import "time"
+import (
+	"time"
+)
 
 // Supporting OANDA docs - http://developer.oanda.com/rest-live-v20/account-ep/
 
@@ -74,7 +76,7 @@ type AccountSummary struct {
 		HedgingEnabled              bool      `json:"hedgingEnabled"`
 		ID                          string    `json:"id"`
 		LastTransactionID           string    `json:"lastTransactionID"`
-		MarginAvailable             string    `json:"marginAvailable"`
+		MarginAvailable             float64   `json:"marginAvailable,string"`
 		MarginCloseoutMarginUsed    string    `json:"marginCloseoutMarginUsed"`
 		MarginCloseoutNAV           string    `json:"marginCloseoutNAV"`
 		MarginCloseoutPercent       string    `json:"marginCloseoutPercent"`
@@ -208,6 +210,78 @@ type AccountChanges struct {
 	} `json:"state"`
 }
 
+type OrderDetails struct {
+	GainPerPipPerMillionUnits float64 `json:"gainPerPipPerMillionUnits,string"`
+	LossPerPipPerMillionUnits float64 `json:"lossPerPipPerMillionUnits,string"`
+	UnitsAvailable            struct {
+		Default struct {
+			Long  float64 `json:"long,string"`
+			Short float64 `json:"short,string"`
+		} `json:"default"`
+		OpenOnly struct {
+			Long  float64 `json:"long,string"`
+			Short float64 `json:"short,string"`
+		} `json:"openOnly"`
+		ReduceFirst struct {
+			Long  float64 `json:"long,string"`
+			Short float64 `json:"short,string"`
+		} `json:"reduceFirst"`
+		ReduceOnly struct {
+			Long  float64 `json:"long,string"`
+			Short float64 `json:"short,string"`
+		} `json:"reduceOnly"`
+	} `json:"unitsAvailable"`
+	UnitValues struct {
+		Isolation struct {
+			Units               string  `json:"units"`
+			Commission          string  `json:"commission"`
+			PositionValueChange string  `json:"positionValueChange"`
+			PositionValue       string  `json:"positionValue"`
+			MarginRequired      float64 `json:"marginRequired,string"`
+			MarginUsed          string  `json:"marginUsed"`
+		} `json:"isolation"`
+		PositionDefault struct {
+			Units               string `json:"units"`
+			Commission          string `json:"commission"`
+			PositionValueChange string `json:"positionValueChange"`
+			PositionValue       string `json:"positionValue"`
+			MarginRequired      string `json:"marginRequired"`
+			MarginUsed          string `json:"marginUsed"`
+		} `json:"positionDefault"`
+		PositionOpenOnly struct {
+			Units               string `json:"units"`
+			Commission          string `json:"commission"`
+			PositionValueChange string `json:"positionValueChange"`
+			PositionValue       string `json:"positionValue"`
+			MarginRequired      string `json:"marginRequired"`
+			MarginUsed          string `json:"marginUsed"`
+		} `json:"positionOpenOnly"`
+		PositionReduceFirst struct {
+			Units               string `json:"units"`
+			Commission          string `json:"commission"`
+			PositionValueChange string `json:"positionValueChange"`
+			PositionValue       string `json:"positionValue"`
+			MarginRequired      string `json:"marginRequired"`
+			MarginUsed          string `json:"marginUsed"`
+		} `json:"positionReduceFirst"`
+		PositionReduceOnly struct {
+			Units               string `json:"units"`
+			Commission          string `json:"commission"`
+			PositionValueChange string `json:"positionValueChange"`
+			PositionValue       string `json:"positionValue"`
+			MarginRequired      string `json:"marginRequired"`
+			MarginUsed          string `json:"marginUsed"`
+		} `json:"positionReduceOnly"`
+	} `json:"unitValues"`
+	ValueTables struct {
+		CommissionTable []struct {
+			Units string `json:"units"`
+			Value string `json:"value"`
+		} `json:"commissionTable"`
+	} `json:"valueTables"`
+	LastTransactionID string `json:"lastTransactionID"`
+}
+
 func (c *OandaConnection) GetAccounts() AccountProperties {
 	endpoint := "/accounts"
 
@@ -223,6 +297,15 @@ func (c *OandaConnection) GetAccount(id string) AccountInfo {
 	response := c.Request(endpoint)
 	data := AccountInfo{}
 	unmarshalJson(response, &data)
+	return data
+}
+
+func (c *OandaConnection) GetOrderDetails(instrument string, units string) OrderDetails {
+	endpoint := "/accounts/" + c.accountID + "/orderEntryData?disableFiltering=true&instrument=" + instrument + "&orderPositionFill=DEFAULT&units=" + units
+	orderDetails := c.Request(endpoint)
+	data := OrderDetails{}
+	unmarshalJson(orderDetails, &data)
+
 	return data
 }
 
