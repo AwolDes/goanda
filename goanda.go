@@ -13,6 +13,13 @@ type Headers struct {
 	auth           string
 }
 
+type Connection interface {
+	Request(endpoint string) []byte
+	Send(endpoint string, data []byte) []byte
+	Update(endpoint string, data []byte) []byte
+	GetOrderDetails(instrument string, units string) OrderDetails
+}
+
 type OandaConnection struct {
 	hostname       string
 	port           int

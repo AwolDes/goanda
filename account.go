@@ -233,44 +233,44 @@ type OrderDetails struct {
 	} `json:"unitsAvailable"`
 	UnitValues struct {
 		Isolation struct {
-			Units               string  `json:"units"`
-			Commission          string  `json:"commission"`
-			PositionValueChange string  `json:"positionValueChange"`
-			PositionValue       string  `json:"positionValue"`
+			Units               float64 `json:"units,string"`
+			Commission          float64 `json:"commission,string"`
+			PositionValueChange float64 `json:"positionValueChange,string"`
+			PositionValue       float64 `json:"positionValue,string"`
 			MarginRequired      float64 `json:"marginRequired,string"`
-			MarginUsed          string  `json:"marginUsed"`
+			MarginUsed          float64 `json:"marginUsed,string"`
 		} `json:"isolation"`
 		PositionDefault struct {
-			Units               string `json:"units"`
-			Commission          string `json:"commission"`
-			PositionValueChange string `json:"positionValueChange"`
-			PositionValue       string `json:"positionValue"`
-			MarginRequired      string `json:"marginRequired"`
-			MarginUsed          string `json:"marginUsed"`
+			Units               float64 `json:"units,string"`
+			Commission          float64 `json:"commission,string"`
+			PositionValueChange float64 `json:"positionValueChange,string"`
+			PositionValue       float64 `json:"positionValue,string"`
+			MarginRequired      float64 `json:"marginRequired,string"`
+			MarginUsed          float64 `json:"marginUsed,string"`
 		} `json:"positionDefault"`
 		PositionOpenOnly struct {
-			Units               string `json:"units"`
-			Commission          string `json:"commission"`
-			PositionValueChange string `json:"positionValueChange"`
-			PositionValue       string `json:"positionValue"`
-			MarginRequired      string `json:"marginRequired"`
-			MarginUsed          string `json:"marginUsed"`
+			Units               float64 `json:"units,string"`
+			Commission          float64 `json:"commission,string"`
+			PositionValueChange float64 `json:"positionValueChange,string"`
+			PositionValue       float64 `json:"positionValue,string"`
+			MarginRequired      float64 `json:"marginRequired,string"`
+			MarginUsed          float64 `json:"marginUsed,string"`
 		} `json:"positionOpenOnly"`
 		PositionReduceFirst struct {
-			Units               string `json:"units"`
-			Commission          string `json:"commission"`
-			PositionValueChange string `json:"positionValueChange"`
-			PositionValue       string `json:"positionValue"`
-			MarginRequired      string `json:"marginRequired"`
-			MarginUsed          string `json:"marginUsed"`
+			Units               float64 `json:"units,string"`
+			Commission          float64 `json:"commission,string"`
+			PositionValueChange float64 `json:"positionValueChange,string"`
+			PositionValue       float64 `json:"positionValue,string"`
+			MarginRequired      float64 `json:"marginRequired,string"`
+			MarginUsed          float64 `json:"marginUsed,string"`
 		} `json:"positionReduceFirst"`
 		PositionReduceOnly struct {
-			Units               string `json:"units"`
-			Commission          string `json:"commission"`
-			PositionValueChange string `json:"positionValueChange"`
-			PositionValue       string `json:"positionValue"`
-			MarginRequired      string `json:"marginRequired"`
-			MarginUsed          string `json:"marginUsed"`
+			Units               float64 `json:"units,string"`
+			Commission          float64 `json:"commission,string"`
+			PositionValueChange float64 `json:"positionValueChange,string"`
+			PositionValue       float64 `json:"positionValue,string"`
+			MarginRequired      float64 `json:"marginRequired,string"`
+			MarginUsed          float64 `json:"marginUsed,string"`
 		} `json:"positionReduceOnly"`
 	} `json:"unitValues"`
 	ValueTables struct {
