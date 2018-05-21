@@ -69,7 +69,7 @@ type AccountSummary struct {
 	Account struct {
 		NAV                         string    `json:"NAV"`
 		Alias                       string    `json:"alias"`
-		Balance                     string    `json:"balance"`
+		Balance                     float64   `json:"balance,string"`
 		CreatedByUserID             int       `json:"createdByUserID"`
 		CreatedTime                 time.Time `json:"createdTime"`
 		Currency                    string    `json:"currency"`
@@ -309,8 +309,8 @@ func (c *OandaConnection) GetOrderDetails(instrument string, units string) Order
 	return data
 }
 
-func (c *OandaConnection) GetAccountSummary(id string) AccountSummary {
-	endpoint := "/accounts/" + id + "/summary"
+func (c *OandaConnection) GetAccountSummary() AccountSummary {
+	endpoint := "/accounts/" + c.accountID + "/summary"
 
 	response := c.Request(endpoint)
 	data := AccountSummary{}

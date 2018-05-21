@@ -20,6 +20,26 @@ type Candles struct {
 	Mid      Candle    `json:"mid"`
 }
 
+type BidAskCandles struct {
+	Candles []struct {
+		Ask struct {
+			C float64 `json:"c,string"`
+			H float64 `json:"h,string"`
+			L float64 `json:"l,string"`
+			O float64 `json:"o,string"`
+		} `json:"ask"`
+		Bid struct {
+			C float64 `json:"c,string"`
+			H float64 `json:"h,string"`
+			L float64 `json:"l,string"`
+			O float64 `json:"o,string"`
+		} `json:"bid"`
+		Complete bool      `json:"complete"`
+		Time     time.Time `json:"time"`
+		Volume   int       `json:"volume"`
+	} `json:"candles"`
+}
+
 type InstrumentHistory struct {
 	Instrument  string    `json:"instrument"`
 	Granularity string    `json:"granularity"`
@@ -44,6 +64,15 @@ func (c *OandaConnection) GetCandles(instrument string, count string, granularit
 	endpoint := "/instruments/" + instrument + "/candles?count=" + count + "&granularity=" + granularity
 	candles := c.Request(endpoint)
 	data := InstrumentHistory{}
+	unmarshalJson(candles, &data)
+
+	return data
+}
+
+func (c *OandaConnection) GetBidAskCandles(instrument string, count string, granularity string) BidAskCandles {
+	endpoint := "/instruments/" + instrument + "/candles?count=" + count + "&granularity=" + granularity + "&price=BA"
+	candles := c.Request(endpoint)
+	data := BidAskCandles{}
 	unmarshalJson(candles, &data)
 
 	return data

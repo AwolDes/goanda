@@ -18,6 +18,7 @@ type Connection interface {
 	Send(endpoint string, data []byte) []byte
 	Update(endpoint string, data []byte) []byte
 	GetOrderDetails(instrument string, units string) OrderDetails
+	GetAccountSummary() AccountSummary
 }
 
 type OandaConnection struct {
