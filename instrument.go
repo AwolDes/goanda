@@ -60,6 +60,49 @@ type BrokerBook struct {
 	Buckets     []Bucket  `json:"buckets"`
 }
 
+type InstrumentPricing struct {
+	Time   time.Time `json:"time"`
+	Prices []struct {
+		Type string    `json:"type"`
+		Time time.Time `json:"time"`
+		Bids []struct {
+			Price     float64 `json:"price,string"`
+			Liquidity int     `json:"liquidity"`
+		} `json:"bids"`
+		Asks []struct {
+			Price     float64 `json:"price,string"`
+			Liquidity int     `json:"liquidity"`
+		} `json:"asks"`
+		CloseoutBid    float64 `json:"closeoutBid,string"`
+		CloseoutAsk    float64 `json:"closeoutAsk,string"`
+		Status         string  `json:"status"`
+		Tradeable      bool    `json:"tradeable"`
+		UnitsAvailable struct {
+			Default struct {
+				Long  string `json:"long"`
+				Short string `json:"short"`
+			} `json:"default"`
+			OpenOnly struct {
+				Long  string `json:"long"`
+				Short string `json:"short"`
+			} `json:"openOnly"`
+			ReduceFirst struct {
+				Long  string `json:"long"`
+				Short string `json:"short"`
+			} `json:"reduceFirst"`
+			ReduceOnly struct {
+				Long  string `json:"long"`
+				Short string `json:"short"`
+			} `json:"reduceOnly"`
+		} `json:"unitsAvailable"`
+		QuoteHomeConversionFactors struct {
+			PositiveUnits string `json:"positiveUnits"`
+			NegativeUnits string `json:"negativeUnits"`
+		} `json:"quoteHomeConversionFactors"`
+		Instrument string `json:"instrument"`
+	} `json:"prices"`
+}
+
 func (c *OandaConnection) GetCandles(instrument string, count string, granularity string) InstrumentHistory {
 	endpoint := "/instruments/" + instrument + "/candles?count=" + count + "&granularity=" + granularity
 	candles := c.Request(endpoint)
@@ -92,6 +135,15 @@ func (c *OandaConnection) PositionBook(instrument string) BrokerBook {
 	orderbook := c.Request(endpoint)
 	data := BrokerBook{}
 	unmarshalJson(orderbook, &data)
+
+	return data
+}
+
+func (c *OandaConnection) GetInstrumentPrice(instrument string) InstrumentPricing {
+	endpoint := "/accounts/" + c.accountID + "/pricing?instruments=" + instrument
+	pricing := c.Request(endpoint)
+	data := InstrumentPricing{}
+	unmarshalJson(pricing, &data)
 
 	return data
 }

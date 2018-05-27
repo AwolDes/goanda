@@ -19,6 +19,7 @@ type Connection interface {
 	Update(endpoint string, data []byte) []byte
 	GetOrderDetails(instrument string, units string) OrderDetails
 	GetAccountSummary() AccountSummary
+	CreateOrder(body OrderPayload) OrderResponse
 }
 
 type OandaConnection struct {
