@@ -24,7 +24,7 @@ type OrderBody struct {
 	TimeInForce      string           `json:"timeInForce"`
 	Type             string           `json:"type"`
 	PositionFill     string           `json:"positionFill,omitempty"`
-	Price            float64          `json:"price,omitempty"`
+	Price            string           `json:"price,omitempty"`
 	StopLossOnFill   *OnFill          `json:"stopLossOnFill,omitempty"`
 	ClientExtensions *OrderExtensions `json:"clientExtensions,omitempty"`
 	TradeID          string           `json:"tradeId,omitempty"`
