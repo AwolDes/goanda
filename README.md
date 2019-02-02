@@ -57,7 +57,7 @@ func main() {
 	key := os.Getenv("OANDA_API_KEY")
 	accountID := os.Getenv("OANDA_ACCOUNT_ID")
 	oanda := goanda.NewConnection(accountID, key, false)
-	history := oanda.GetCandles("EUR_USD")
+	history := oanda.GetCandles("EUR_USD", "10", "S5")
 	spew.Dump(history)
 }
 
