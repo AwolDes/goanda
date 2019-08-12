@@ -25,6 +25,7 @@ type OrderBody struct {
 	Type             string           `json:"type"`
 	PositionFill     string           `json:"positionFill,omitempty"`
 	Price            string           `json:"price,omitempty"`
+	TakeProfitOnFill *OnFill          `json:"takeProfitOnFill,omitempty"`
 	StopLossOnFill   *OnFill          `json:"stopLossOnFill,omitempty"`
 	ClientExtensions *OrderExtensions `json:"clientExtensions,omitempty"`
 	TradeID          string           `json:"tradeId,omitempty"`
