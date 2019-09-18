@@ -30,6 +30,7 @@ type Transaction struct {
 		Price          string    `json:"price"`
 		Reason         string    `json:"reason"`
 		Time           time.Time `json:"time"`
+		TradeCloseTransactionID string `json:"tradeCloseTransactionID,omitempty"`
 		TradeOpened    struct {
 			TradeID string `json:"tradeID"`
 			Units   string `json:"units"`
