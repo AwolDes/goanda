@@ -52,12 +52,26 @@ type Bucket struct {
 	ShortCountPercent string `json:"shortCountPercent"`
 }
 
-type BrokerBook struct {
-	Instrument  string    `json:"instrument"`
-	Time        time.Time `json:"time"`
-	Price       string    `json:"price"`
-	BucketWidth string    `json:"bucketWidth"`
-	Buckets     []Bucket  `json:"buckets"`
+type OrderBook struct {
+	OrderBook   struct {
+		Instrument  string    `json:"instrument"`
+		Time        time.Time `json:"time"`
+		UnixTime    string       `json:"unixTime"`
+		Price       string    `json:"price"`
+		BucketWidth string    `json:"bucketWidth"`
+		Buckets     []Bucket  `json:"buckets"`
+	}
+}
+
+type PositionBook struct {
+	PositionBook   struct {
+		Instrument  string    `json:"instrument"`
+		Time        time.Time `json:"time"`
+		UnixTime    string       `json:"unixTime"`
+		Price       string    `json:"price"`
+		BucketWidth string    `json:"bucketWidth"`
+		Buckets     []Bucket  `json:"buckets"`
+	}
 }
 
 type InstrumentPricing struct {
@@ -121,19 +135,19 @@ func (c *OandaConnection) GetBidAskCandles(instrument string, count string, gran
 	return data
 }
 
-func (c *OandaConnection) OrderBook(instrument string) BrokerBook {
+func (c *OandaConnection) OrderBook(instrument string) OrderBook {
 	endpoint := "/instruments/" + instrument + "/orderBook"
 	orderbook := c.Request(endpoint)
-	data := BrokerBook{}
+	data := OrderBook{}
 	unmarshalJson(orderbook, &data)
 
 	return data
 }
 
-func (c *OandaConnection) PositionBook(instrument string) BrokerBook {
+func (c *OandaConnection) PositionBook(instrument string) PositionBook {
 	endpoint := "/instruments/" + instrument + "/positionBook"
 	orderbook := c.Request(endpoint)
-	data := BrokerBook{}
+	data := PositionBook{}
 	unmarshalJson(orderbook, &data)
 
 	return data
