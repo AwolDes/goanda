@@ -117,47 +117,62 @@ type InstrumentPricing struct {
 	} `json:"prices"`
 }
 
-func (c *OandaConnection) GetCandles(instrument string, count string, granularity string) InstrumentHistory {
+func (c *OandaConnection) GetCandles(instrument string, count string, granularity string) (InstrumentHistory, error) {
 	endpoint := "/instruments/" + instrument + "/candles?count=" + count + "&granularity=" + granularity
-	candles := c.Request(endpoint)
+	candles, err := c.Request(endpoint)
+	if err != nil {
+		return InstrumentHistory{}, err
+	}
 	data := InstrumentHistory{}
 	unmarshalJson(candles, &data)
 
-	return data
+	return data, nil
 }
 
-func (c *OandaConnection) GetBidAskCandles(instrument string, count string, granularity string) BidAskCandles {
+func (c *OandaConnection) GetBidAskCandles(instrument string, count string, granularity string) (BidAskCandles, error) {
 	endpoint := "/instruments/" + instrument + "/candles?count=" + count + "&granularity=" + granularity + "&price=BA"
-	candles := c.Request(endpoint)
+	candles, err := c.Request(endpoint)
+	if err != nil {
+		return BidAskCandles{}, err
+	}
 	data := BidAskCandles{}
 	unmarshalJson(candles, &data)
 
-	return data
+	return data, nil
 }
 
-func (c *OandaConnection) OrderBook(instrument string) OrderBook {
+func (c *OandaConnection) OrderBook(instrument string) (OrderBook, error) {
 	endpoint := "/instruments/" + instrument + "/orderBook"
-	orderbook := c.Request(endpoint)
+	orderbook, err := c.Request(endpoint)
+	if err != nil {
+		return OrderBook{}, err
+	}
 	data := OrderBook{}
 	unmarshalJson(orderbook, &data)
 
-	return data
+	return data, nil
 }
 
-func (c *OandaConnection) PositionBook(instrument string) PositionBook {
+func (c *OandaConnection) PositionBook(instrument string) (PositionBook, error) {
 	endpoint := "/instruments/" + instrument + "/positionBook"
-	orderbook := c.Request(endpoint)
+	orderbook, err := c.Request(endpoint)
+	if err != nil {
+		return PositionBook{}, err
+	}
 	data := PositionBook{}
 	unmarshalJson(orderbook, &data)
 
-	return data
+	return data, nil
 }
 
-func (c *OandaConnection) GetInstrumentPrice(instrument string) InstrumentPricing {
+func (c *OandaConnection) GetInstrumentPrice(instrument string) (InstrumentPricing, error) {
 	endpoint := "/accounts/" + c.accountID + "/pricing?instruments=" + instrument
-	pricing := c.Request(endpoint)
+	pricing, err := c.Request(endpoint)
+	if err != nil {
+		return InstrumentPricing{}, err
+	}
 	data := InstrumentPricing{}
 	unmarshalJson(pricing, &data)
 
-	return data
+	return data, nil
 }

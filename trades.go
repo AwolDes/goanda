@@ -112,40 +112,54 @@ type ModifiedTrade struct {
 	LastTransactionID     string   `json:"lastTransactionID"`
 }
 
-func (c *OandaConnection) GetTradesForInstrument(instrument string) ReceivedTrades {
+func (c *OandaConnection) GetTradesForInstrument(instrument string) (ReceivedTrades, error) {
 	endpoint := "/accounts/" + c.accountID + "/trades" + "?instrument=" + instrument
 
-	response := c.Request(endpoint)
+	response, err := c.Request(endpoint)
+	if err != nil {
+		return ReceivedTrades{}, err
+	}
 	data := ReceivedTrades{}
 	unmarshalJson(response, &data)
-	return data
+	return data, nil
 }
 
-func (c *OandaConnection) GetOpenTrades() ReceivedTrades {
+func (c *OandaConnection) GetOpenTrades() (ReceivedTrades, error) {
 	endpoint := "/accounts/" + c.accountID + "/openTrades"
 
-	response := c.Request(endpoint)
+	response, err := c.Request(endpoint)
+	if err != nil {
+		return ReceivedTrades{}, err
+	}
 	data := ReceivedTrades{}
 	unmarshalJson(response, &data)
-	return data
+	return data, nil
 }
 
-func (c *OandaConnection) GetTrade(ticket string) ReceivedTrade {
+func (c *OandaConnection) GetTrade(ticket string) (ReceivedTrade, error) {
 	endpoint := "/accounts/" + c.accountID + "/trades" + "/" + ticket
 
-	response := c.Request(endpoint)
+	response, err := c.Request(endpoint)
+	if err != nil {
+		return ReceivedTrade{}, err
+	}
 	data := ReceivedTrade{}
 	unmarshalJson(response, &data)
-	return data
+	return data, nil
 }
 
 // Default is close the whole position using the string "ALL" in body.units
-func (c *OandaConnection) ReduceTradeSize(ticket string, body CloseTradePayload) ModifiedTrade {
+func (c *OandaConnection) ReduceTradeSize(ticket string, body CloseTradePayload) (ModifiedTrade, error) {
 	endpoint := "/accounts/" + c.accountID + "/trades/" + ticket
 	jsonBody, err := json.Marshal(body)
-	checkErr(err)
-	response := c.Update(endpoint, jsonBody)
+	if err != nil {
+		return ModifiedTrade{}, err
+	}
+	response, err := c.Update(endpoint, jsonBody)
+	if err != nil {
+		return ModifiedTrade{}, err
+	}
 	data := ModifiedTrade{}
 	unmarshalJson(response, &data)
-	return data
+	return data, nil
 }

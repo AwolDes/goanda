@@ -119,64 +119,86 @@ type CancelledOrder struct {
 	LastTransactionID     string   `json:"lastTransactionID"`
 }
 
-func (c *OandaConnection) CreateOrder(body OrderPayload) OrderResponse {
+func (c *OandaConnection) CreateOrder(body OrderPayload) (OrderResponse, error) {
 	endpoint := "/accounts/" + c.accountID + "/orders"
 	jsonBody, err := json.Marshal(body)
-	checkErr(err)
-	response := c.Send(endpoint, jsonBody)
+	if err != nil {
+		return OrderResponse{}, err
+	}
+	response, err := c.Send(endpoint, jsonBody)
+	if err != nil {
+		return OrderResponse{}, err
+	}
 	data := OrderResponse{}
 	unmarshalJson(response, &data)
-	return data
+	return data, nil
 }
 
-func (c *OandaConnection) GetOrders(instrument string) RetrievedOrders {
+func (c *OandaConnection) GetOrders(instrument string) (RetrievedOrders, error) {
 	endpoint := "/accounts/" + c.accountID + "/orders"
 
 	if instrument != "" {
 		endpoint = endpoint + "?instrument=" + instrument
 	}
 
-	response := c.Request(endpoint)
+	response, err := c.Request(endpoint)
+	if err != nil {
+		return RetrievedOrders{}, err
+	}
 	data := RetrievedOrders{}
 	unmarshalJson(response, &data)
-	return data
+	return data, nil
 }
 
-func (c *OandaConnection) GetPendingOrders() RetrievedOrders {
+func (c *OandaConnection) GetPendingOrders() (RetrievedOrders, error) {
 	endpoint := "/accounts/" + c.accountID + "/pendingOrders"
 
-	response := c.Request(endpoint)
+	response, err := c.Request(endpoint)
+	if err != nil {
+		return RetrievedOrders{}, err
+	}
 	data := RetrievedOrders{}
 	unmarshalJson(response, &data)
-	return data
+	return data, nil
 
 }
 
-func (c *OandaConnection) GetOrder(orderSpecifier string) RetrievedOrder {
+func (c *OandaConnection) GetOrder(orderSpecifier string) (RetrievedOrder, error) {
 	endpoint := "/accounts/" + c.accountID + "/orders/" + orderSpecifier
 
-	response := c.Request(endpoint)
+	response, err := c.Request(endpoint)
+	if err != nil {
+		return RetrievedOrder{}, err
+	}
 	data := RetrievedOrder{}
 	unmarshalJson(response, &data)
-	return data
+	return data, nil
 
 }
 
-func (c *OandaConnection) UpdateOrder(orderSpecifier string, body OrderPayload) RetrievedOrder {
+func (c *OandaConnection) UpdateOrder(orderSpecifier string, body OrderPayload) (RetrievedOrder, error) {
 	endpoint := "/accounts/" + c.accountID + "/orders/" + orderSpecifier
 	jsonBody, err := json.Marshal(body)
-	checkErr(err)
-	response := c.Update(endpoint, jsonBody)
+	if err != nil {
+		return RetrievedOrder{}, err
+	}
+	response, err := c.Update(endpoint, jsonBody)
+	if err != nil {
+		return RetrievedOrder{}, err
+	}
 	data := RetrievedOrder{}
 	unmarshalJson(response, &data)
-	return data
+	return data, nil
 }
 
-func (c *OandaConnection) CancelOrder(orderSpecifier string) CancelledOrder {
+func (c *OandaConnection) CancelOrder(orderSpecifier string) (CancelledOrder, error) {
 	endpoint := "/accounts/" + c.accountID + "/orders/" + orderSpecifier + "/cancel"
-	response := c.Update(endpoint, nil)
+	response, err := c.Update(endpoint, nil)
+	if err != nil {
+		return CancelledOrder{}, err
+	}
 	data := CancelledOrder{}
 	unmarshalJson(response, &data)
-	return data
+	return data, nil
 
 }
