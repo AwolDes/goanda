@@ -19,10 +19,12 @@ type OpenPositions struct {
 		Pl           string `json:"pl"`
 		ResettablePL string `json:"resettablePL"`
 		Short        struct {
-			Pl           string `json:"pl"`
-			ResettablePL string `json:"resettablePL"`
-			Units        string `json:"units"`
-			UnrealizedPL string `json:"unrealizedPL"`
+			AveragePrice string   `json:"averagePrice"`
+			Pl           string   `json:"pl"`
+			ResettablePL string   `json:"resettablePL"`
+			TradeIDs     []string `json:"tradeIDs"`
+			Units        string   `json:"units"`
+			UnrealizedPL string   `json:"unrealizedPL"`
 		} `json:"short"`
 		UnrealizedPL string `json:"unrealizedPL"`
 	} `json:"positions"`
