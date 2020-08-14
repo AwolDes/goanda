@@ -3,6 +3,7 @@ package goanda
 // Supporting OANDA docs - http://developer.oanda.com/rest-live-v20/instrument-ep/
 
 import (
+	"strconv"
 	"time"
 )
 
@@ -103,18 +104,34 @@ type InstrumentPricing struct {
 	} `json:"prices"`
 }
 
-func (c *Connection) GetCandles(instrument string, count string, granularity string) (InstrumentHistory, error) {
+func (c *Connection) GetCandles(instrument string, count int, granularity string) (InstrumentHistory, error) {
 	ca := InstrumentHistory{}
 	err := c.getAndUnmarshal(
 		"/instruments/"+
 			instrument+
 			"/candles?count="+
-			count+
+			strconv.Itoa(count)+
 			"&granularity="+
 			granularity,
 		&ca,
 	)
 	return ca, err
+}
+
+func (c *Connection) GetTimeCandles(instrument string, count int, granularity string, to time.Time) (InstrumentHistory, error) {
+	ih := InstrumentHistory{}
+	err := c.requestAndUnmarshal(
+		"/instruments/"+
+			instrument+
+			"/candles?count="+
+			strconv.Itoa(count)+
+			"&to="+
+			strconv.Itoa(int(to.Unix()))+
+			"&granularity="+
+			granularity,
+		&ih,
+	)
+	return ih, err
 }
 
 func (c *Connection) GetBidAskCandles(instrument string, count string, granularity string) (BidAskCandles, error) {
