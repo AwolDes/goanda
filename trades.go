@@ -3,7 +3,6 @@ package goanda
 // Supporting OANDA docs - http://developer.oanda.com/rest-live-v20/trade-ep/
 
 import (
-	"encoding/json"
 	"time"
 )
 
@@ -112,40 +111,47 @@ type ModifiedTrade struct {
 	LastTransactionID     string   `json:"lastTransactionID"`
 }
 
-func (c *OandaConnection) GetTradesForInstrument(instrument string) ReceivedTrades {
-	endpoint := "/accounts/" + c.accountID + "/trades" + "?instrument=" + instrument
-
-	response := c.Request(endpoint)
-	data := ReceivedTrades{}
-	unmarshalJson(response, &data)
-	return data
+func (c *Connection) GetTradesForInstrument(instrument string) (ReceivedTrades, error) {
+	rt := ReceivedTrades{}
+	err := c.getAndUnmarshal(
+		"/accounts/"+
+			c.accountID+
+			"/trades"+
+			"?instrument="+
+			instrument,
+		&rt,
+	)
+	return rt, err
 }
 
-func (c *OandaConnection) GetOpenTrades() ReceivedTrades {
-	endpoint := "/accounts/" + c.accountID + "/openTrades"
-
-	response := c.Request(endpoint)
-	data := ReceivedTrades{}
-	unmarshalJson(response, &data)
-	return data
+func (c *Connection) GetOpenTrades() (ReceivedTrades, error) {
+	rt := ReceivedTrades{}
+	err := c.getAndUnmarshal("/accounts/"+c.accountID+"/openTrades", &rt)
+	return rt, err
 }
 
-func (c *OandaConnection) GetTrade(ticket string) ReceivedTrade {
-	endpoint := "/accounts/" + c.accountID + "/trades" + "/" + ticket
-
-	response := c.Request(endpoint)
-	data := ReceivedTrade{}
-	unmarshalJson(response, &data)
-	return data
+func (c *Connection) GetTrade(ticket string) (ReceivedTrade, error) {
+	rt := ReceivedTrade{}
+	err := c.getAndUnmarshal(
+		"/accounts/"+
+			c.accountID+
+			"/trades/"+
+			ticket,
+		&rt,
+	)
+	return rt, err
 }
 
 // Default is close the whole position using the string "ALL" in body.units
-func (c *OandaConnection) ReduceTradeSize(ticket string, body CloseTradePayload) ModifiedTrade {
-	endpoint := "/accounts/" + c.accountID + "/trades/" + ticket
-	jsonBody, err := json.Marshal(body)
-	checkErr(err)
-	response := c.Update(endpoint, jsonBody)
-	data := ModifiedTrade{}
-	unmarshalJson(response, &data)
-	return data
+func (c *Connection) ReduceTradeSize(ticket string, body CloseTradePayload) (ModifiedTrade, error) {
+	mt := ModifiedTrade{}
+	err := c.putAndUnmarshal(
+		"/accounts/"+
+			c.accountID+
+			"/trades/"+
+			ticket,
+		body,
+		&mt,
+	)
+	return mt, err
 }
