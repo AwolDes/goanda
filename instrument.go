@@ -103,8 +103,13 @@ type InstrumentPricing struct {
 	} `json:"prices"`
 }
 
-func (c *OandaConnection) GetCandles(instrument string, count string, granularity string) InstrumentHistory {
-	endpoint := "/instruments/" + instrument + "/candles?count=" + count + "&granularity=" + granularity
+func (c *OandaConnection) GetCandles(instrument string, params map[string]string) InstrumentHistory {
+    params_sentence := ""
+    for index, value := range params{
+        params_sentence+= "&" + index + "=" + value 
+    }
+    params_sentence = params_sentence[1:]
+    endpoint := "/instruments/" + instrument + "/candles?" + params_sentence + "&price=M"
 	candles := c.Request(endpoint)
 	data := InstrumentHistory{}
 	unmarshalJson(candles, &data)
@@ -112,12 +117,16 @@ func (c *OandaConnection) GetCandles(instrument string, count string, granularit
 	return data
 }
 
-func (c *OandaConnection) GetBidAskCandles(instrument string, count string, granularity string) BidAskCandles {
-	endpoint := "/instruments/" + instrument + "/candles?count=" + count + "&granularity=" + granularity + "&price=BA"
+func (c *OandaConnection) GetBidAskCandles(instrument string, params map[string]string) BidAskCandles {
+    params_sentence := ""
+    for index, value := range params{
+        params_sentence+= index + "=" + value 
+    }
+    params_sentence = params_sentence[1:]
+    endpoint := "/instruments/" + instrument + "/candles?" + params_sentence + "&price=M"
 	candles := c.Request(endpoint)
 	data := BidAskCandles{}
 	unmarshalJson(candles, &data)
-
 	return data
 }
 
