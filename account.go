@@ -7,11 +7,9 @@ import (
 // Supporting OANDA docs - http://developer.oanda.com/rest-live-v20/account-ep/
 
 type AccountProperties struct {
-	Accounts []struct {
-		ID           string `json:"id"`
-		Mt4AccountID int    `json:"mt4AccountID"`
-		Tags         []string
-	}
+	ID           string `json:"id"`
+	Mt4AccountID int    `json:"mt4AccountID"`
+	Tags         []string
 }
 
 type AccountInfo struct {
@@ -96,21 +94,19 @@ type AccountSummary struct {
 	LastTransactionID string `json:"lastTransactionID"`
 }
 
-type AccountInstruments struct {
-	Instruments []struct {
-		DisplayName                 string `json:"displayName"`
-		DisplayPrecision            int    `json:"displayPrecision"`
-		MarginRate                  string `json:"marginRate"`
-		MaximumOrderUnits           string `json:"maximumOrderUnits"`
-		MaximumPositionSize         string `json:"maximumPositionSize"`
-		MaximumTrailingStopDistance string `json:"maximumTrailingStopDistance"`
-		MinimumTradeSize            string `json:"minimumTradeSize"`
-		MinimumTrailingStopDistance string `json:"minimumTrailingStopDistance"`
-		Name                        string `json:"name"`
-		PipLocation                 int    `json:"pipLocation"`
-		TradeUnitsPrecision         int    `json:"tradeUnitsPrecision"`
-		Type                        string `json:"type"`
-	} `json:"instruments"`
+type Instruments []struct {
+	DisplayName                 string `json:"displayName"`
+	DisplayPrecision            int    `json:"displayPrecision"`
+	MarginRate                  string `json:"marginRate"`
+	MaximumOrderUnits           string `json:"maximumOrderUnits"`
+	MaximumPositionSize         string `json:"maximumPositionSize"`
+	MaximumTrailingStopDistance string `json:"maximumTrailingStopDistance"`
+	MinimumTradeSize            string `json:"minimumTradeSize"`
+	MinimumTrailingStopDistance string `json:"minimumTrailingStopDistance"`
+	Name                        string `json:"name"`
+	PipLocation                 int    `json:"pipLocation"`
+	TradeUnitsPrecision         int    `json:"tradeUnitsPrecision"`
+	Type                        string `json:"type"`
 }
 
 type AccountChanges struct {
@@ -282,56 +278,69 @@ type OrderDetails struct {
 	LastTransactionID string `json:"lastTransactionID"`
 }
 
-func (c *OandaConnection) GetAccounts() AccountProperties {
-	endpoint := "/accounts"
-
-	response := c.Request(endpoint)
-	data := AccountProperties{}
-	unmarshalJson(response, &data)
-	return data
+// Accounts returns a slice of information on accounts authorized for the token.
+func (c *Connection) Accounts() ([]AccountProperties, error) {
+	var ap []AccountProperties
+	err := c.getAndUnmarshal("/accounts", &ap)
+	return ap, err
 }
 
-func (c *OandaConnection) GetAccount(id string) AccountInfo {
-	endpoint := "/accounts/" + id
-
-	response := c.Request(endpoint)
-	data := AccountInfo{}
-	unmarshalJson(response, &data)
-	return data
+// GetAccount returns information on the account.
+func (c *Connection) GetAccount(id string) (AccountInfo, error) {
+	ai := AccountInfo{}
+	err := c.getAndUnmarshal("/accounts/"+id, &ai)
+	return ai, err
 }
 
-func (c *OandaConnection) GetOrderDetails(instrument string, units string) OrderDetails {
-	endpoint := "/accounts/" + c.accountID + "/orderEntryData?disableFiltering=true&instrument=" + instrument + "&orderPositionFill=DEFAULT&units=" + units
-	orderDetails := c.Request(endpoint)
-	data := OrderDetails{}
-	unmarshalJson(orderDetails, &data)
-
-	return data
+func (c *Connection) GetOrderDetails(instrument string, units string) (OrderDetails, error) {
+	od := OrderDetails{}
+	err := c.getAndUnmarshal(
+		"/accounts/"+
+			c.accountID+
+			"/orderEntryData?disableFiltering=true&instrument="+
+			instrument+
+			"&orderPositionFill=DEFAULT&units="+
+			units,
+		&od,
+	)
+	return od, err
 }
 
-func (c *OandaConnection) GetAccountSummary() AccountSummary {
-	endpoint := "/accounts/" + c.accountID + "/summary"
-
-	response := c.Request(endpoint)
-	data := AccountSummary{}
-	unmarshalJson(response, &data)
-	return data
+func (c *Connection) GetAccountSummary() (AccountSummary, error) {
+	as := AccountSummary{}
+	err := c.getAndUnmarshal(
+		"/accounts/"+
+			c.accountID+
+			"/summary",
+		&as,
+	)
+	return as, err
 }
 
-func (c *OandaConnection) GetAccountInstruments(id string) AccountInstruments {
-	endpoint := "/accounts/" + id + "/instruments"
+func (c *Connection) GetAccountInstruments(id string) (Instruments, error) {
+	ai := Instruments{}
 
-	response := c.Request(endpoint)
-	data := AccountInstruments{}
-	unmarshalJson(response, &data)
-	return data
+	err := c.getAndUnmarshal(
+		"/accounts/"+
+			id+
+			"/instruments",
+		&struct {
+			Instruments Instruments `json:"instruments"`
+		}{
+			Instruments: ai,
+		},
+	)
+	return ai, err
 }
 
-func (c *OandaConnection) GetAccountChanges(id string, transactionId string) AccountChanges {
-	endpoint := "/accounts/" + id + "/changes?sinceTransactionID=" + transactionId
-
-	response := c.Request(endpoint)
-	data := AccountChanges{}
-	unmarshalJson(response, &data)
-	return data
+func (c *Connection) GetAccountChanges(id string, transactionId string) (AccountChanges, error) {
+	ac := AccountChanges{}
+	err := c.getAndUnmarshal(
+		"/accounts/"+
+			id+
+			"/changes?sinceTransactionID="+
+			transactionId,
+		&ac,
+	)
+	return ac, err
 }
