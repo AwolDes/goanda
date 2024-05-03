@@ -191,7 +191,7 @@ func (c *Connection) GetCandles(instrument string, count int, g Granularity) (In
 
 func (c *Connection) GetTimeToCandles(instrument string, count int, g Granularity, to time.Time) (InstrumentHistory, error) {
 	ih := InstrumentHistory{}
-	err := c.requestAndUnmarshal(
+	err := c.getAndUnmarshal(
 		"/instruments/"+
 			instrument+
 			"/candles?count="+
@@ -206,7 +206,7 @@ func (c *Connection) GetTimeToCandles(instrument string, count int, g Granularit
 }
 func (c *Connection) GetTimeFromCandles(instrument string, count int, g Granularity, from time.Time) (InstrumentHistory, error) {
 	ih := InstrumentHistory{}
-	err := c.requestAndUnmarshal(
+	err := c.getAndUnmarshal(
 		"/instruments/"+
 			instrument+
 			"/candles?count="+
