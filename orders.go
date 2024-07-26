@@ -27,7 +27,7 @@ type OrderBody struct {
 	TakeProfitOnFill *OnFill          `json:"takeProfitOnFill,omitempty"`
 	StopLossOnFill   *OnFill          `json:"stopLossOnFill,omitempty"`
 	ClientExtensions *OrderExtensions `json:"clientExtensions,omitempty"`
-	TradeID          string           `json:"tradeId,omitempty"`
+	TradeID          string           `json:"tradeID,omitempty"`
 }
 
 type OrderPayload struct {
@@ -80,6 +80,7 @@ type OrderInfo struct {
 	} `json:"clientExtensions,omitempty"`
 	CreateTime       time.Time `json:"createTime"`
 	ID               string    `json:"id"`
+	TradeID          string    `json:"tradeID,omitempty"`
 	Instrument       string    `json:"instrument,omitempty"`
 	PartialFill      string    `json:"partialFill"`
 	PositionFill     string    `json:"positionFill"`

@@ -3,7 +3,7 @@ package goanda
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 )
@@ -15,6 +15,7 @@ const (
 
 // ConnectionConfig is used to configure new connections
 // Defaults;
+//
 //	UserAgent	= v20-golang/0.0.1
 //	Timeout		= 5 seconds
 //	Live		= False
@@ -75,7 +76,7 @@ func (c *Connection) CheckConnection() error {
 	return err
 }
 
-// Get performs a genereic http get on the api
+// Get performs a generic http get on the api
 func (c *Connection) Get(endpoint string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, c.hostname+endpoint, nil)
 	if err != nil {
@@ -156,7 +157,7 @@ func (c *Connection) makeRequest(endpoint string, client http.Client, req *http.
 		return nil, newAPIError(req, res)
 	}
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
