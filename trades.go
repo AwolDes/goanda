@@ -62,19 +62,19 @@ type ModifiedTrade struct {
 		Time      time.Time `json:"time"`
 	} `json:"orderCreateTransaction"`
 	OrderFillTransaction struct {
-		Type           string `json:"type"`
-		Instrument     string `json:"instrument"`
-		Units          string `json:"units"`
-		Price          string `json:"price"`
-		FullPrice      string `json:"fullPrice"`
-		PL             string `json:"pl"`
-		Financing      string `json:"financing"`
-		Commission     string `json:"commission"`
-		AccountBalance string `json:"accountBalance"`
-		TradeOpened    string `json:"tradeOpened"`
-		TimeInForce    string `json:"timeInForce"`
-		PositionFill   string `json:"positionFill"`
-		Reason         string `json:"reason"`
+		Type           string    `json:"type"`
+		Instrument     string    `json:"instrument"`
+		Units          string    `json:"units"`
+		Price          string    `json:"price"`
+		FullPrice      FullPrice `json:"fullPrice"`
+		PL             string    `json:"pl"`
+		Financing      string    `json:"financing"`
+		Commission     string    `json:"commission"`
+		AccountBalance string    `json:"accountBalance"`
+		TradeOpened    string    `json:"tradeOpened"`
+		TimeInForce    string    `json:"timeInForce"`
+		PositionFill   string    `json:"positionFill"`
+		Reason         string    `json:"reason"`
 		TradesClosed   []struct {
 			TradeID    string `json:"tradeID"`
 			Units      string `json:"units"`
@@ -109,6 +109,19 @@ type ModifiedTrade struct {
 	} `json:"orderCancelTransaction"`
 	RelatedTransactionIDs []string `json:"relatedTransactionIDs"`
 	LastTransactionID     string   `json:"lastTransactionID"`
+}
+
+type FullPrice struct {
+	CloseoutBid string       `json:"closeoutBid"`
+	CloseoutAsk string       `json:"closeoutAsk"`
+	Timestamp   string       `json:"timestamp"`
+	Bids        []PriceLevel `json:"bids"`
+	Asks        []PriceLevel `json:"asks"`
+}
+
+type PriceLevel struct {
+	Price     string `json:"price"`
+	Liquidity string `json:"liquidity"`
 }
 
 func (c *Connection) GetTradesForInstrument(instrument string) (ReceivedTrades, error) {
@@ -149,7 +162,8 @@ func (c *Connection) ReduceTradeSize(ticket string, body CloseTradePayload) (Mod
 		"/accounts/"+
 			c.accountID+
 			"/trades/"+
-			ticket,
+			ticket+
+			"/close",
 		body,
 		&mt,
 	)
