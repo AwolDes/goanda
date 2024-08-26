@@ -1,11 +1,11 @@
 # goanda
-A Golang wrapper for the [OANDA v20 API](http://developer.oanda.com/rest-live-v20/introduction/). Currently OANDA has wrappers for Python, Javascript and Java. Goanda exists to extend upon those languages because of the increasing popularity of Go and for a side prject I'm working on.
+A Golang wrapper for the [OANDA v20 API](http://developer.oanda.com/rest-live-v20/introduction/). Currently OANDA has wrappers for Python, Javascript and Java. Goanda exists to extend upon those languages because of the increasing popularity of Go.
 
 ## Features
 Goanda can perform the following actions on your OANDA brokerage accounts:
 
 - Get candlesticks of all instruments
-- Create and update orders
+- Create and update orders with comprehensive order properties
 - Get data on current and past trades on OANDA
 - Close/scale out of trades you have open
 - Close positions (not just trades)
@@ -16,6 +16,7 @@ Goanda can perform the following actions on your OANDA brokerage accounts:
   - And more!
 - Get data on all your transactions
 - Get all pricing data (bid/ask spread) on specific instruments
+- Stream real-time data for prices, transactions, account changes, and candles
 
 ## Requirements
 - Go v1.9+
@@ -54,10 +55,28 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
+	config := &goanda.ConnectionConfig{
+		UserAgent: "goanda",
+		Timeout: 10 * time.Second,
+		Live: false,
+	}
+
+	granularity := goanda.GranularityFiveSeconds
+
 	key := os.Getenv("OANDA_API_KEY")
 	accountID := os.Getenv("OANDA_ACCOUNT_ID")
-	oanda := goanda.NewConnection(accountID, key, false)
-	history := oanda.GetCandles("EUR_USD", "10", "S5")
+
+	oanda, err := goanda.NewConnection(accountID, key, config)
+	if err != nil {
+		log.Fatalf("Error creating connection: %v", err)
+	}
+
+	history, err := oanda.GetCandles("EUR_USD", 10, granularity)
+	if err != nil {
+		log.Fatalf("Error getting candles: %v", err)
+	}
+
 	spew.Dump(history)
 }
 
@@ -68,21 +87,28 @@ Look at the [`/examples`](https://github.com/AwolDes/goanda/tree/master/examples
 ## Contributing
 For now if you'd like to contribute create an Issue and/or submit a PR!
 
+## Testing
+The project now includes comprehensive test coverage. To run the tests, use the following command:
+
+```
+go test -v ./...
+```
+
 ## TODO
 ### **API** (in order of priority)
 - [x] Instrument endpoints (to get prices and the order book)
 - [x] Order endpoints (to create, get or update orders for an account)
-- [x] Trade enpoints (to get information on current trades) 
+- [x] Trade endpoints (to get information on current trades) 
 - [x] Position endpoints (to get information on current positions)
 - [x] Account endpoints (to get information on the account)
 - [x] Transaction endpoints (to get information on account transactions)
 - [x] Pricing endpoints (to get pricing of instruments)
-- [ ] Streaming endpoints for Pricing & Transactions
+- [x] Streaming endpoints for Pricing & Transactions
 
 ### **Docs**
 - [x] Write docs on how to use `goanda`
 - [x] Write example programs for `goanda`
-- [ ] Write tests for `goanda`
+- [x] Write tests for `goanda`
 
 
 ## Supporting Projects

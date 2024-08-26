@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/awoldes/goanda"
 	"github.com/davecgh/go-spew/spew"
@@ -14,12 +15,24 @@ func placeLimitOrder() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
+	config := &goanda.ConnectionConfig{
+		UserAgent: "goanda",
+		Timeout:   10 * time.Second,
+		Live:      false,
+	}
+
 	key := os.Getenv("OANDA_API_KEY")
 	accountID := os.Getenv("OANDA_ACCOUNT_ID")
-	oanda := goanda.NewConnection(accountID, key, false)
+
+	oanda, err := goanda.NewConnection(accountID, key, config)
+	if err != nil {
+		log.Fatalf("Error creating connection: %v", err)
+	}
+
 	order := goanda.OrderPayload{
 		Order: goanda.OrderBody{
-			Units:        "100",
+			Units:        100,
 			Instrument:   "EUR_USD",
 			TimeInForce:  "FOK",
 			Type:         "LIMIT",
@@ -31,6 +44,10 @@ func placeLimitOrder() {
 			},
 		},
 	}
-	orderResult := oanda.CreateOrder(order)
+
+	orderResult, err := oanda.CreateOrder(order)
+	if err != nil {
+		log.Fatalf("Error creating order: %v", err)
+	}
 	spew.Dump("%+v\n", orderResult)
 }

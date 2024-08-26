@@ -13,21 +13,43 @@ type OrderExtensions struct {
 }
 
 type OnFill struct {
-	TimeInForce string `json:"timeInForce,omitempty"`
-	Price       string `json:"price,omitempty"` // must be a string for float precision
+	TimeInForce      string           `json:"timeInForce,omitempty"`
+	Price            string           `json:"price,omitempty"` // must be a string for float precision
+	Distance         string           `json:"distance,omitempty"`
+	GtdTime          string           `json:"gtdTime,omitempty"`
+	ClientExtensions *OrderExtensions `json:"clientExtensions,omitempty"`
 }
 
 type OrderBody struct {
-	Units            int              `json:"units"`
-	Instrument       string           `json:"instrument"`
-	TimeInForce      string           `json:"timeInForce"`
-	Type             string           `json:"type"`
-	PositionFill     string           `json:"positionFill,omitempty"`
-	Price            string           `json:"price,omitempty"`
-	TakeProfitOnFill *OnFill          `json:"takeProfitOnFill,omitempty"`
-	StopLossOnFill   *OnFill          `json:"stopLossOnFill,omitempty"`
-	ClientExtensions *OrderExtensions `json:"clientExtensions,omitempty"`
-	TradeID          string           `json:"tradeID,omitempty"`
+	ID                       string           `json:"id,omitempty"`
+	CreateTime               time.Time        `json:"createTime,omitempty"`
+	State                    string           `json:"state,omitempty"`
+	ClientExtensions         *OrderExtensions `json:"clientExtensions,omitempty"`
+	Instrument               string           `json:"instrument"`
+	Units                    int              `json:"units"`
+	TimeInForce              string           `json:"timeInForce"`
+	PriceBound               string           `json:"priceBound,omitempty"`
+	Type                     string           `json:"type"`
+	PositionFill             string           `json:"positionFill,omitempty"`
+	Price                    string           `json:"price,omitempty"`
+	TakeProfitOnFill         *OnFill          `json:"takeProfitOnFill,omitempty"`
+	StopLossOnFill           *OnFill          `json:"stopLossOnFill,omitempty"`
+	GuaranteedStopLossOnFill *OnFill          `json:"guaranteedStopLossOnFill,omitempty"`
+	TrailingStopLossOnFill   *OnFill          `json:"trailingStopLossOnFill,omitempty"`
+	TradeClientExtensions    *OrderExtensions `json:"tradeClientExtensions,omitempty"`
+	FillingTransactionID     string           `json:"fillingTransactionID,omitempty"`
+	FilledTime               time.Time        `json:"filledTime,omitempty"`
+	TradeOpenedID            string           `json:"tradeOpenedID,omitempty"`
+	TradeID                  string           `json:"tradeID,omitempty"`
+	TradeReducedID           string           `json:"tradeReducedID,omitempty"`
+	TradeClosedIDs           []string         `json:"tradeClosedIDs,omitempty"`
+	CancellingTransactionID  string           `json:"cancellingTransactionID,omitempty"`
+	CancelledTime            time.Time        `json:"cancelledTime,omitempty"`
+	ReplacesOrderID          string           `json:"replacesOrderID,omitempty"`
+	ReplacedByOrderID        string           `json:"replacedByOrderID,omitempty"`
+	TriggerCondition         string           `json:"triggerCondition,omitempty"`
+	GTDTime                  time.Time        `json:"gtdTime,omitempty"`
+	Distance                 string           `json:"distance,omitempty"`
 }
 
 type OrderPayload struct {
@@ -37,18 +59,29 @@ type OrderPayload struct {
 type OrderResponse struct {
 	LastTransactionID      string `json:"lastTransactionID"`
 	OrderCreateTransaction struct {
-		AccountID    string    `json:"accountID"`
-		BatchID      string    `json:"batchID"`
-		ID           string    `json:"id"`
-		Instrument   string    `json:"instrument"`
-		PositionFill string    `json:"positionFill"`
-		Reason       string    `json:"reason"`
-		Time         time.Time `json:"time"`
-		TimeInForce  string    `json:"timeInForce"`
-		Type         string    `json:"type"`
-		Units        string    `json:"units"`
-		UserID       int       `json:"userID"`
-	} `json:"orderCreateTransaction"`
+		AccountID                string           `json:"accountID"`
+		BatchID                  string           `json:"batchID"`
+		ID                       string           `json:"id"`
+		Instrument               string           `json:"instrument"`
+		PositionFill             string           `json:"positionFill"`
+		Reason                   string           `json:"reason"`
+		Time                     time.Time        `json:"time"`
+		TimeInForce              string           `json:"timeInForce"`
+		Type                     string           `json:"type"`
+		Units                    string           `json:"units"`
+		UserID                   int              `json:"userID"`
+		Price                    string           `json:"price,omitempty"`
+		PriceBound               string           `json:"priceBound,omitempty"`
+		Extensions               *OrderExtensions `json:"clientExtensions,omitempty"`
+		TakeProfitOnFill         *OnFill          `json:"takeProfitOnFill,omitempty"`
+		StopLossOnFill           *OnFill          `json:"stopLossOnFill,omitempty"`
+		GuaranteedStopLossOnFill *OnFill          `json:"guaranteedStopLossOnFill,omitempty"`
+		TrailingStopLossOnFill   *OnFill          `json:"trailingStopLossOnFill,omitempty"`
+		TradeClientExtensions    *OrderExtensions `json:"tradeClientExtensions,omitempty"`
+		TriggerCondition         string           `json:"triggerCondition,omitempty"`
+		GTDTime                  time.Time        `json:"gtdTime,omitempty"`
+		Distance                 string           `json:"distance,omitempty"`
+	} `json:"orderCreateTransaction,omitempty"`
 	OrderFillTransaction struct {
 		AccountBalance string    `json:"accountBalance"`
 		AccountID      string    `json:"accountID"`
@@ -65,32 +98,79 @@ type OrderResponse struct {
 			TradeID string `json:"tradeID"`
 			Units   string `json:"units"`
 		} `json:"tradeOpened"`
-		Type   string `json:"type"`
-		Units  string `json:"units"`
-		UserID int    `json:"userID"`
-	} `json:"orderFillTransaction"`
-	RelatedTransactionIDs []string `json:"relatedTransactionIDs"`
+		Type      string `json:"type"`
+		Units     string `json:"units"`
+		UserID    int    `json:"userID"`
+		FullPrice FullPrice `json:"fullPrice,omitempty"`
+		TradesClosed []struct {
+			TradeID    string `json:"tradeID"`
+			Units      string `json:"units"`
+			Financing  string `json:"financing"`
+			RealizedPL string `json:"realizedPL"`
+			Price      string `json:"price"`
+		} `json:"tradesClosed,omitempty"`
+		TradeReduced struct {
+			TradeID    string `json:"tradeID"`
+			Units      string `json:"units"`
+			Financing  string `json:"financing"`
+			RealizedPL string `json:"realizedPL"`
+			Price      string `json:"price"`
+		} `json:"tradeReduced,omitempty"`
+	} `json:"orderFillTransaction,omitempty"`
+	OrderCancelTransaction struct {
+		ID     string    `json:"id"`
+		Time   time.Time `json:"time"`
+		Reason string    `json:"reason"`
+	} `json:"orderCancelTransaction,omitempty"`
+	RelatedTransactionIDs []string         `json:"relatedTransactionIDs"`
+	OrderClientExtensions *OrderExtensions `json:"orderClientExtensions,omitempty"`
+	TradeClientExtensions *OrderExtensions `json:"tradeClientExtensions,omitempty"`
+}
+
+// GetOrderState returns the state of the order based on the transactions in the response
+func (or *OrderResponse) GetOrderState() string {
+	if or.OrderCancelTransaction.ID != "" {
+		return "CANCELLED"
+	}
+	if or.OrderFillTransaction.ID != "" {
+		return "FILLED"
+	}
+	if or.OrderCreateTransaction.ID != "" {
+		return "PENDING"
+	}
+	return "UNKNOWN"
 }
 
 type OrderInfo struct {
-	ClientExtensions struct {
-		Comment string `json:"comment,omitempty"`
-		ID      string `json:"id,omitempty"`
-		Tag     string `json:"tag,omitempty"`
-	} `json:"clientExtensions,omitempty"`
-	CreateTime       time.Time `json:"createTime"`
-	ID               string    `json:"id"`
-	TradeID          string    `json:"tradeID,omitempty"`
-	Instrument       string    `json:"instrument,omitempty"`
-	PartialFill      string    `json:"partialFill"`
-	PositionFill     string    `json:"positionFill"`
-	Price            string    `json:"price"`
-	ReplacesOrderID  string    `json:"replacesOrderID,omitempty"`
-	State            string    `json:"state"`
-	TimeInForce      string    `json:"timeInForce"`
-	TriggerCondition string    `json:"triggerCondition"`
-	Type             string    `json:"type"`
-	Units            string    `json:"units,omitempty"`
+	ID                       string           `json:"id"`
+	CreateTime               time.Time        `json:"createTime"`
+	State                    string           `json:"state"`
+	ClientExtensions         *OrderExtensions `json:"clientExtensions,omitempty"`
+	Instrument               string           `json:"instrument"`
+	Units                    string           `json:"units"` // Keep as string for API response
+	TimeInForce              string           `json:"timeInForce"`
+	PriceBound               string           `json:"priceBound,omitempty"`
+	Type                     string           `json:"type"`
+	PositionFill             string           `json:"positionFill"`
+	Price                    string           `json:"price,omitempty"`
+	TakeProfitOnFill         *OnFill          `json:"takeProfitOnFill,omitempty"`
+	StopLossOnFill           *OnFill          `json:"stopLossOnFill,omitempty"`
+	GuaranteedStopLossOnFill *OnFill          `json:"guaranteedStopLossOnFill,omitempty"`
+	TrailingStopLossOnFill   *OnFill          `json:"trailingStopLossOnFill,omitempty"`
+	TradeClientExtensions    *OrderExtensions `json:"tradeClientExtensions,omitempty"`
+	FillingTransactionID     string           `json:"fillingTransactionID,omitempty"`
+	FilledTime               time.Time        `json:"filledTime,omitempty"`
+	TradeOpenedID            string           `json:"tradeOpenedID,omitempty"`
+	TradeID                  string           `json:"tradeID,omitempty"`
+	TradeReducedID           string           `json:"tradeReducedID,omitempty"`
+	CancellingTransactionID  string           `json:"cancellingTransactionID,omitempty"`
+	CancelledTime            time.Time        `json:"cancelledTime,omitempty"`
+	ReplacesOrderID          string           `json:"replacesOrderID,omitempty"`
+	ReplacedByOrderID        string           `json:"replacedByOrderID,omitempty"`
+	TriggerCondition         string           `json:"triggerCondition,omitempty"`
+	GTDTime                  time.Time        `json:"gtdTime,omitempty"`
+	PartialFill              string           `json:"partialFill,omitempty"`
+	Distance                 string           `json:"distance,omitempty"`
 }
 
 type RetrievedOrders struct {
