@@ -13,7 +13,7 @@ func GranularityFromDuration(d time.Duration) (Granularity, error) {
 	if _, ok := candlestickGranularity[Granularity(d)]; ok {
 		return Granularity(d), nil
 	}
-	return 0, errors.New("No such granularity")
+	return 0, errors.New("no such granularity")
 }
 
 // Granularity defines a candle's time period

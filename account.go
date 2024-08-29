@@ -318,19 +318,18 @@ func (c *Connection) GetAccountSummary() (AccountSummary, error) {
 }
 
 func (c *Connection) GetAccountInstruments(id string) (Instruments, error) {
-	ai := Instruments{}
+	var response struct {
+		Instruments Instruments `json:"instruments"`
+	}
 
 	err := c.getAndUnmarshal(
 		"/accounts/"+
 			id+
 			"/instruments",
-		&struct {
-			Instruments Instruments `json:"instruments"`
-		}{
-			Instruments: ai,
-		},
+		&response,
 	)
-	return ai, err
+
+	return response.Instruments, err
 }
 
 func (c *Connection) GetAccountChanges(id string, transactionId string) (AccountChanges, error) {

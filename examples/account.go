@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"os"
-
+	"time"
 	"github.com/awoldes/goanda"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/joho/godotenv"
@@ -14,22 +14,32 @@ func getAccountDetails() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
+	config := &goanda.ConnectionConfig{
+		UserAgent: "goanda",
+		Timeout: 10 * time.Second,
+		Live: false,
+	}
+
 	key := os.Getenv("OANDA_API_KEY")
 	accountID := os.Getenv("OANDA_ACCOUNT_ID")
-	oanda := goanda.NewConnection(accountID, key, false)
+	oanda, err := goanda.NewConnection(accountID, key, config)
+	if err != nil {
+		log.Fatalf("Error creating connection: %v", err)
+	}
 
-	accountChanges := oanda.GetAccountChanges("101-011-6559702-001", "54")
+	accountChanges, err := oanda.GetAccountChanges("101-011-6559702-001", "54")
 	spew.Dump(accountChanges)
 
-	accountInstruments := oanda.GetAccountInstruments("101-011-6559702-001")
+	accountInstruments, err := oanda.GetAccountInstruments("101-011-6559702-001")
 	spew.Dump(accountInstruments)
 
-	accountSummary := oanda.GetAccountSummary("101-011-6559702-001")
+	accountSummary, err := oanda.GetAccountSummary()
 	spew.Dump(accountSummary)
 
-	account := oanda.GetAccount("101-011-6559702-003")
+	account, err := oanda.GetAccount("101-011-6559702-003")
 	spew.Dump(account)
 
-	accounts := oanda.GetAccounts()
+	accounts, err := oanda.Accounts()
 	spew.Dump(accounts)
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/awoldes/goanda"
 	"github.com/davecgh/go-spew/spew"
@@ -14,22 +15,44 @@ func getTrades() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
+	config := &goanda.ConnectionConfig{
+		UserAgent: "goanda",
+		Timeout:   10 * time.Second,
+		Live:      false,
+	}
+
 	key := os.Getenv("OANDA_API_KEY")
 	accountID := os.Getenv("OANDA_ACCOUNT_ID")
-	oanda := goanda.NewConnection(accountID, key, false)
+	oanda, err := goanda.NewConnection(accountID, key, config)
+	if err != nil {
+		log.Fatalf("Error creating connection: %v", err)
+	}
 
-	tradesResponse := oanda.GetTrade("54")
+	tradesResponse, err := oanda.GetTrade("54")
+	if err != nil {
+		log.Fatalf("Error getting trade: %v", err)
+	}
 	spew.Dump("%+v\n", tradesResponse)
 
-	openTrades := oanda.GetOpenTrades()
+	openTrades, err := oanda.GetOpenTrades()
+	if err != nil {
+		log.Fatalf("Error getting open trades: %v", err)
+	}
 	spew.Dump("%+v\n", openTrades)
 
-	trade := oanda.GetTradesForInstrument("AUD_USD")
+	trade, err := oanda.GetTradesForInstrument("AUD_USD")
+	if err != nil {
+		log.Fatalf("Error getting trades for instrument: %v", err)
+	}
 	spew.Dump("%+v\n", trade)
 
-	reduceTrade := oanda.ReduceTradeSize("AUD_USD", goanda.CloseTradePayload{
+	reduceTrade, err:= oanda.ReduceTradeSize("AUD_USD", goanda.CloseTradePayload{
 		Units: "100.00",
 	})
+	if err != nil {
+		log.Fatalf("Error reducing trade size: %v", err)
+	}
 
 	spew.Dump("%+v\n", reduceTrade)
 }
